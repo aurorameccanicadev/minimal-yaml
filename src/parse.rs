@@ -5,15 +5,6 @@ use std::str::Bytes;
 
 use crate::Result;
 
-// Implementation lifted from std, as it's currently only on Nightly. It's such a simple macro that it's low risk to duplicate it here (and better than writing one myself)
-macro_rules! matches {
-    ($expression:expr, $( $pattern:pat )|+ $( if $guard: expr )?) => {
-        match $expression {
-            $( $pattern )|+ $( if $guard )? => true,
-            _ => false
-        }
-    }
-}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ParseContext {
     FlowIn,
@@ -210,7 +201,7 @@ impl<'a, 'b> Parser<'a> {
             }
             b'-' => match self.peek() {
                 Some(byt) if byt.is_linebreak() || byt.is_ws() => self.parse_sequence_block()?,
-                byt => unreachable!(format!("unexpected {:?}", byt.map(char::from))),
+                byt => unreachable!("unexpected {:?}", byt.map(char::from)),
             },
 
             b'}' | b']' => {
